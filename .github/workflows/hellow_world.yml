@@ -24,6 +24,16 @@ jobs:
             distribution: 'temurin'
             java-version: '17'
             cache: 'gradle'
+
+      - name: Download IconKitchen-Output.zip and Copy Icons
+        run: |
+            wget -O IconKitchen-Output.zip ${{ github.event.inputs.icon_path }}
+            unzip IconKitchen-Output.zip -d temp_unzip
+            cp -r temp_unzip/android/res/* app/src/main/res/
+            cp temp_unzip/android/play_store_512.png app/src/main/ic_launcher-playstore.png
+            rm -rf temp_unzip IconKitchen-Output.zip
+        shell: bash
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
