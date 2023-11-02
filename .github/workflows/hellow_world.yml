@@ -27,11 +27,42 @@ jobs:
       - name: Download IconKitchen-Output.zip and Copy Icons
         run: |
             wget -O IconKitchen-Output.zip ${{ github.event.inputs.icon_path }}
-            unzip IconKitchen-Output.zip -d temp_unzip
-            cp -r temp_unzip/android/res/* app/src/main/res/
-            cp temp_unzip/android/play_store_512.png app/src/main/ic_launcher-playstore.png
-            rm -rf temp_unzip IconKitchen-Output.zip
         shell: bash
+      - name : Unzip IconKitchen-Output.zip
+        run: |
+          @echo off
+          setlocal enabledelayedexpansion
+          
+          set ZIP_PATH=IconKitchen-Output.zip
+          set ANDROID_PROJECT_PATH=app\src\main\res
+          
+          :: Generate a unique temporary directory name in the system's temp directory
+          :generate_temp_dir
+          set "TEMP_DIR=%TEMP%\copy_resources_temp_%random%"
+          if exist "!TEMP_DIR!" (
+              goto generate_temp_dir
+          )
+          
+          :: Create the temporary directory
+          mkdir "!TEMP_DIR!"
+          
+          :: Unzip the contents of the ZIP archive to the temporary directory
+          powershell -Command "Expand-Archive -Path '%ZIP_PATH%' -DestinationPath '!TEMP_DIR!'"
+          
+          :: Loop through subdirectories in the temporary directory and move their contents to the ANDROID_PROJECT_PATH
+          for /d %%d in ("!TEMP_DIR!\android\res\*") do (
+              set "subdir=%%~nxd"
+              xcopy /s /y "%%d\*" "%ANDROID_PROJECT_PATH%\!subdir!\"
+          )
+          
+          :: Copy play-store-512.png to app/src/main and rename it to ic_launcher-playstore.png
+          copy "!TEMP_DIR!\android\play_store_512.png" "app\src\main\ic_launcher-playstore.png"
+          
+          :: Remove the temporary directory
+          rmdir /s /q "!TEMP_DIR!"
+          
+          echo Files copied successfully
+        shell: cmd
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
