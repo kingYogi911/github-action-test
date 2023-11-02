@@ -35,6 +35,7 @@ jobs:
             TEMP_DIR="/tmp/copy_resources_temp_$$"
             mkdir "$TEMP_DIR"
             unzip -q "$ZIP_PATH" -d "$TEMP_DIR"
+            ls
             for d in "$TEMP_DIR"/android/res/*; do
               subdir=$(basename "$d")
               echo "copying file $d to $ANDROID_PROJECT_PATH/$subdir"

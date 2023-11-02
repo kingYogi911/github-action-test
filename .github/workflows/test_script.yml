@@ -1,0 +1,48 @@
+name: Test Script
+on:
+  workflow_dispatch:
+    inputs:
+      app_name:
+        description: "App Name to be modified"
+        required: true
+      icon_path:
+        description: "Downloadable URL to the IconKitchen-Output.zip file"
+        required: true
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Download IconKitchen-Output.zip and Copy Icons
+        run: |
+          wget -O IconKitchen-Output.zip ${{ github.event.inputs.icon_path }}
+        shell: bash
+      - name : Unzip IconKitchen-Output.zip
+        run: |
+          ZIP_PATH="IconKitchen-Output.zip"
+          ANDROID_PROJECT_PATH="app/src/main/res"
+          TEMP_DIR="/tmp/copy_resources_temp_$$"
+          mkdir "$TEMP_DIR"
+          unzip -q "$ZIP_PATH" -d "$TEMP_DIR"
+          ls
+          for d in "$TEMP_DIR"/android/res/*; do
+            subdir=$(basename "$d")
+            echo "copying file $d to $ANDROID_PROJECT_PATH/$subdir"
+            ls "$ANDROID_PROJECT_PATH/$subdir"
+            cp -r "$d" "$ANDROID_PROJECT_PATH/$subdir"
+          done
+          cp "$TEMP_DIR/android/play_store_512.png" "$ANDROID_PROJECT_PATH/ic_launcher-playstore.png"
+          rm -rf "$TEMP_DIR" 
+          echo "Files copied successfully"
+        shell: bash
