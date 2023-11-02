@@ -1,0 +1,16 @@
+import groovy.json.JsonSlurper
+task customizeApp {
+    doLast {
+
+        // Extract values from the JSON
+        def appName = project.properties.app_name
+
+        if (appName.isEmpty()) {
+            throw new GradleException("Please provide values for app_name")
+        }
+
+        // Update the app name in the strings.xml file
+        def stringsXmlFile = file("app/src/main/res/values/strings.xml")
+        stringsXmlFile.text = stringsXmlFile.text.replaceFirst(/<string name="app_name">.*<\/string>/, '<string name="app_name">' + appName + '</string>')
+    }
+}
