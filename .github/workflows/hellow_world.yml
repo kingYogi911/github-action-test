@@ -40,7 +40,7 @@ jobs:
               subdir=$(basename "$d")
               echo "copying file $d to $ANDROID_PROJECT_PATH/$subdir"
               ls "$ANDROID_PROJECT_PATH/$subdir"
-              cp -r "$d\*" "$ANDROID_PROJECT_PATH/$subdir"
+              cp -r "$d/." "$ANDROID_PROJECT_PATH/$subdir"
             done
             cp "$TEMP_DIR/android/play_store_512.png" "$ANDROID_PROJECT_PATH/ic_launcher-playstore.png"
             rm -rf "$TEMP_DIR" 
