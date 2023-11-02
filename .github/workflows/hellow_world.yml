@@ -32,17 +32,12 @@ jobs:
         run: |
             ZIP_PATH="IconKitchen-Output.zip"
             ANDROID_PROJECT_PATH="app/src/main/res"
-            generate_temp_dir() {
-              TEMP_DIR="/tmp/copy_resources_temp_$$"
-              while [ -e "$TEMP_DIR" ]; do
-              TEMP_DIR="/tmp/copy_resources_temp_$$"
-              done
-              mkdir "$TEMP_DIR"
-            }
-            generate_temp_dir
+            TEMP_DIR="/tmp/copy_resources_temp_$$"
+            mkdir "$TEMP_DIR"
             unzip -q "$ZIP_PATH" -d "$TEMP_DIR"
             for d in "$TEMP_DIR"/android/res/*; do
               subdir=$(basename "$d")
+              echo "copying file $d to $ANDROID_PROJECT_PATH/$subdir"  
               cp -r "$d" "$ANDROID_PROJECT_PATH/$subdir"
             done
             cp "$TEMP_DIR/android/play_store_512.png" "$ANDROID_PROJECT_PATH/ic_launcher-playstore.png"
