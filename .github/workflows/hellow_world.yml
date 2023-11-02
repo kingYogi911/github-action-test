@@ -6,7 +6,6 @@ on:
         description: "Runner Name"
         required: true
 
-
 jobs:
   hello:
     runs-on: ubuntu-latest
