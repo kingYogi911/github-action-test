@@ -13,6 +13,7 @@ jobs:
   build:
     name: Build Project
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -61,3 +62,26 @@ jobs:
         with:
             name: "${{ github.event.inputs.app_name }}"
             path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Mark Failed if failed
+        if: ${{ failure() }}
+        run: echo "Build Failed"
+
+      - name: Mark Success is Build Successful
+        if: ${{ success() }}
+        run: echo "Build Successful"
+  success:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
+      - name: Mark Success is Build Successful
+        run: echo "Build Successful"
+
+  failed:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ failed() }}
+    steps:
+      - name: Mark Failed if failed
+        run: echo "Build Failed"
