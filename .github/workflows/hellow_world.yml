@@ -81,7 +81,7 @@ jobs:
   failed:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ failed() }}
+    if: ${{ failure() }}
     steps:
       - name: Mark Failed if failed
         run: echo "Build Failed"
