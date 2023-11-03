@@ -59,10 +59,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-            name: app-release
+            name: "${{ github.event.inputs.app_name }}"
             path: app/build/outputs/apk/debug/app-debug.apk
-      - name: Upload Icon
-        uses: actions/upload-artifact@v2
-        with:
-            name: ic_launcher-xxxhdpi
-            path: app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
